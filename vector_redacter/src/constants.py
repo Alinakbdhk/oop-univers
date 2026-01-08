@@ -1,8 +1,3 @@
-# file: src/constants.py
-"""
-Константы для векторного редактора.
-"""
-
 # Настройки сцены
 DEFAULT_SCENE_WIDTH = 800
 DEFAULT_SCENE_HEIGHT = 600

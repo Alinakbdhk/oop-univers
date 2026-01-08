@@ -1,10 +1,5 @@
-# file: src/logic/commands.py
-"""
-Команды для стека отмены/повтора.
-"""
 from PySide6.QtGui import QUndoCommand
 from typing import Optional
-
 
 class AddShapeCommand(QUndoCommand):
     def __init__(self, scene, item):
@@ -24,7 +19,6 @@ class AddShapeCommand(QUndoCommand):
     def undo(self):
         self.scene.removeItem(self.item)
 
-
 class DeleteCommand(QUndoCommand):
     def __init__(self, scene, item):
         super().__init__()
@@ -43,14 +37,12 @@ class DeleteCommand(QUndoCommand):
         if self.item.scene() != self.scene:
             self.scene.addItem(self.item)
 
-
 class MoveCommand(QUndoCommand):
     def __init__(self, item, old_pos, new_pos):
         super().__init__()
         self.item = item
         self.old_pos = old_pos
         self.new_pos = new_pos
-
         name = "Shape"
         if hasattr(item, "type_name"):
             name = item.type_name
@@ -62,18 +54,15 @@ class MoveCommand(QUndoCommand):
     def redo(self):
         self.item.setPos(self.new_pos)
 
-
 class ChangeColorCommand(QUndoCommand):
     def __init__(self, item, new_color: str):
         super().__init__()
         self.item = item
         self.new_color = new_color
-
         if hasattr(item, "pen"):
             self.old_color = item.pen().color().name()
         else:
             self.old_color = "#000000"
-
         self.setText(f"Change Color to {new_color}")
 
     def redo(self):
@@ -83,7 +72,6 @@ class ChangeColorCommand(QUndoCommand):
     def undo(self):
         if hasattr(self.item, "set_active_color"):
             self.item.set_active_color(self.old_color)
-
 
 class ChangeWidthCommand(QUndoCommand):
     def __init__(self, item, new_width: int):

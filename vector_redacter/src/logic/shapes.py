@@ -6,10 +6,8 @@ from PySide6.QtGui import QPen, QColor, QPainterPath
 from PySide6.QtCore import QPointF
 from src.constants import DEFAULT_STROKE_WIDTH, DEFAULT_COLOR
 
-
 class ShapeMeta(type(QGraphicsPathItem), type(ABC)):
     pass
-
 
 class Shape(QGraphicsPathItem, ABC, metaclass=ShapeMeta):
     def __init__(self, color: str = DEFAULT_COLOR, stroke_width: int = DEFAULT_STROKE_WIDTH):
@@ -21,13 +19,11 @@ class Shape(QGraphicsPathItem, ABC, metaclass=ShapeMeta):
         self.setFlag(QGraphicsPathItem.GraphicsItemFlag.ItemIsMovable)
 
     def set_active_color(self, color: str) -> None:
-        """Базовая реализация для Листьев (Line, Rect)"""
         pen = self.pen()
         pen.setColor(QColor(color))
         self.setPen(pen)
 
     def set_stroke_width(self, width: int) -> None:
-        """Устанавливает толщину линии для фигуры"""
         pen = self.pen()
         pen.setWidth(width)
         self.setPen(pen)
@@ -35,7 +31,6 @@ class Shape(QGraphicsPathItem, ABC, metaclass=ShapeMeta):
     @property
     @abstractmethod
     def type_name(self) -> str:
-        """Возвращает строковый идентификатор типа фигуры ('rect', 'line')"""
         pass
 
     @abstractmethod
@@ -45,10 +40,6 @@ class Shape(QGraphicsPathItem, ABC, metaclass=ShapeMeta):
 
     @abstractmethod
     def set_geometry(self, start_point: QPointF, end_point: QPointF) -> None:
-        """
-        Метод для динамического обновления формы фигуры.
-        Принимает две точки (старт рисования и текущее положение мыши).
-        """
         pass
 
 
@@ -56,10 +47,10 @@ class Rectangle(Shape):
     def __init__(self, x: float, y: float, w: float, h: float,
                  color: str = DEFAULT_COLOR, stroke_width: int = DEFAULT_STROKE_WIDTH):
         super().__init__(color, stroke_width)
-        self._x = x  # Изменили с x на _x
-        self._y = y  # Изменили с y на _y
-        self._w = w  # Изменили с w на _w
-        self._h = h  # Изменили с h на _h
+        self._x = x
+        self._y = y
+        self._w = w
+        self._h = h
         self._create_geometry()
 
     def _create_geometry(self) -> None:
@@ -78,7 +69,7 @@ class Rectangle(Shape):
         self.setPath(path)
 
     @property
-    def x(self) -> float:  # Добавляем свойство для доступа
+    def x(self) -> float:
         return self._x
 
     @property
@@ -116,7 +107,7 @@ class Line(Shape):
     def __init__(self, x1: float, y1: float, x2: float, y2: float,
                  color: str = DEFAULT_COLOR, stroke_width: int = DEFAULT_STROKE_WIDTH):
         super().__init__(color, stroke_width)
-        self._x1 = x1  # Изменили
+        self._x1 = x1
         self._y1 = y1
         self._x2 = x2
         self._y2 = y2
@@ -176,7 +167,7 @@ class Ellipse(Shape):
     def __init__(self, x: float, y: float, w: float, h: float,
                  color: str = DEFAULT_COLOR, stroke_width: int = DEFAULT_STROKE_WIDTH):
         super().__init__(color, stroke_width)
-        self._x = x  # Изменили
+        self._x = x
         self._y = y
         self._w = w
         self._h = h
@@ -245,13 +236,11 @@ class Group(QGraphicsItemGroup):
         pass
 
     def set_active_color(self, color: str) -> None:
-        """Рекурсивно меняет цвет всех детей."""
         for child in self.childItems():
             if hasattr(child, 'set_active_color'):
                 child.set_active_color(color)
 
     def set_stroke_width(self, width: int) -> None:
-        """Рекурсивно меняет толщину всех детей."""
         for child in self.childItems():
             if hasattr(child, 'set_stroke_width'):
                 child.set_stroke_width(width)
@@ -264,6 +253,6 @@ class Group(QGraphicsItemGroup):
 
         return {
             "type": self.type_name,
-            "pos": [self.pos().x(), self.pos().y()],  # Используем pos()
+            "pos": [self.pos().x(), self.pos().y()],
             "children": children_data
         }
